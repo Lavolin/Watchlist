@@ -34,12 +34,13 @@ namespace Watchlist.Services
         {
             var entities = await context.Movies.ToListAsync();
 
+
             return entities
                 .Select(m => new MovieViewModel()
                 {
                     Id = m.Id,
                     Director = m.Director,
-                    Genre = m?.Genre.Name,
+                    Genre = m?.Genre?.Name,
                     ImageUrl = m.ImageUrl,
                     Rating = m.Rating,
                     Title = m.Title

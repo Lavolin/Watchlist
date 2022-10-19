@@ -24,7 +24,7 @@ namespace Watchlist.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> AddMovie()
+        public async Task<IActionResult> Add()
         {
             var model = new AddMovieViewModel()
             {
@@ -35,7 +35,7 @@ namespace Watchlist.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddMovie(AddMovieViewModel model)
+        public async Task<IActionResult> Add(AddMovieViewModel model)
         {
             if (!ModelState.IsValid)
             {
