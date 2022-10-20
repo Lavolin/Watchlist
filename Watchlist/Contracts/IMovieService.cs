@@ -10,5 +10,7 @@ namespace Watchlist.Contracts
         Task<IEnumerable<Genre>> GetGenresAsync();
 
         Task AddMovieAsync(AddMovieViewModel model);
+
+        Task AddMovieToCollectionAsync(int movieId, string userId);
     }
 }

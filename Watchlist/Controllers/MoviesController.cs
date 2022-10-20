@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using Watchlist.Contracts;
 using Watchlist.Models;
 
@@ -54,6 +55,25 @@ namespace Watchlist.Controllers
 
                 return View(model);
             }
+        }
+
+        public async Task<IActionResult> AddToCollection(int movieId)
+        {
+            try
+            {
+                var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+                await movieService.AddMovieToCollectionAsync(movieId, userId);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+           
+
+            return RedirectToAction(nameof(All));
         }
     }
 }
