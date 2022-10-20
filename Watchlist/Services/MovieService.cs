@@ -32,7 +32,11 @@ namespace Watchlist.Services
 
         public async Task AddMovieToCollectionAsync(int movieId, string userId)
         {
-            var user = await context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+
+            var user = await context.Users
+                 .Where(u => u.Id == userId)
+                 .Include(u => u.UsersMovies)
+                 .FirstOrDefaultAsync();
 
             if (user == null)
             {
@@ -47,15 +51,19 @@ namespace Watchlist.Services
 
             }
 
-            user.UsersMovies.Add(new UserMovie()
+            if (!user.UsersMovies.Any(m => m.MovieId == movieId))
             {
-                MovieId = movie.Id,
-                UserId = user.Id,
-                Movie = movie,
-                User = user
-            });
+                user.UsersMovies.Add(new UserMovie()
+                {
+                    MovieId = movie.Id,
+                    UserId = user.Id,
+                    Movie = movie,
+                    User = user
+                });
 
-            await context.SaveChangesAsync();
+                await context.SaveChangesAsync();
+            }
+           
         }
 
         public async Task<IEnumerable<MovieViewModel>> GetAllAsync()
@@ -78,6 +86,56 @@ namespace Watchlist.Services
         public async Task<IEnumerable<Genre>> GetGenresAsync()
         {
             return await context.Genres.ToListAsync();
+        }
+
+        public async Task<IEnumerable<MovieViewModel>> GetWatchedAsync(string userId)
+        {
+            var user = await context.Users
+                .Where(u => u.Id == userId)
+                .Include(u => u.UsersMovies)
+                .ThenInclude(um => um.Movie)
+                .ThenInclude(m => m.Genre)
+                .FirstOrDefaultAsync();
+
+            if (user == null)
+            {
+                throw new ArgumentException("Invalid UserId");
+            }
+
+            return user.UsersMovies.Select(m => new MovieViewModel()
+            {
+                Director = m.Movie.Director,
+                Genre = m.Movie.Genre?.Name,
+                Id = m.MovieId,
+                ImageUrl = m.Movie.ImageUrl,
+                Title = m.Movie.Title,
+                Rating = m.Movie.Rating
+
+            });
+
+        }
+
+        public async Task RemoveMovieFormCollectionAsync(int movieId, string userId)
+        {
+            var user = await context.Users
+                 .Where(u => u.Id == userId)
+                 .Include(u => u.UsersMovies)
+                 .FirstOrDefaultAsync();
+
+            if (user == null)
+            {
+                throw new ArgumentException("Invalid UserId");
+            }
+
+            var movie = user.UsersMovies.FirstOrDefault(m => m.MovieId == movieId);
+
+            if (movie != null)
+            {
+                user.UsersMovies.Remove(movie);
+
+                await context.SaveChangesAsync();
+            }
+
         }
     }
 }

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Watchlist.Contracts;
+using Watchlist.Data.Models;
 using Watchlist.Models;
 
 namespace Watchlist.Controllers
@@ -75,5 +76,26 @@ namespace Watchlist.Controllers
 
             return RedirectToAction(nameof(All));
         }
+
+        public async Task<IActionResult> Watched()
+        {
+            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+            var model = await movieService.GetWatchedAsync(userId);
+
+            return View("Mine", model);
+        }
+
+        public async Task<IActionResult> RemoveFromCollection(int movieId)
+        {
+            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+
+            await movieService.RemoveMovieFormCollectionAsync(movieId, userId);
+
+            return RedirectToAction(nameof(Watched));
+
+        }
+
     }
 }

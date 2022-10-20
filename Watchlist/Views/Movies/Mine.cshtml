@@ -1,4 +1,4 @@
-﻿@*
+﻿@model IEnumerable<MovieViewModel>
 
 @{
     ViewBag.Title = "Watched Movies";
@@ -9,7 +9,7 @@
 
 
 <div class="text-center row">
-    @foreach (var movie in Model.Movies)
+    @foreach (var movie in Model)
     {
         <div class="card col-4" style="width: 20rem; ">
             <img class="card-img-top" style="width: 18rem;"
@@ -27,4 +27,4 @@
             </form>
         </div>
     }
-</div>*@
+</div>
