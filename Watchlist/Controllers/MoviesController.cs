@@ -64,6 +64,9 @@ namespace Watchlist.Controllers
             {
                 var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
+                //var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+
                 await movieService.AddMovieToCollectionAsync(movieId, userId);
             }
             catch (Exception)
