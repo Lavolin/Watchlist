@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Watchlist.Contracts;
 using Watchlist.Data;
 using Watchlist.Data.Models;
+using Watchlist.ModelBinders;
 using Watchlist.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,7 +25,13 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.LoginPath = "/User/Login";
 });
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews()
+    .AddMvcOptions(options =>
+    {
+        options.ModelBinderProviders.Insert(0, new DecimalModelBinderProvider());
+    });
+
+
 
 builder.Services.AddScoped<IMovieService, MovieService>();
 
