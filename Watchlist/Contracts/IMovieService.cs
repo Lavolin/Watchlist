@@ -17,5 +17,8 @@ namespace Watchlist.Contracts
 
         Task RemoveMovieFormCollectionAsync(int movieId, string userId);
 
+        Task<EditMovieViewModel> GetForEditAsync(int id);
+
+        Task EditAsync(EditMovieViewModel model);
     }
 }
